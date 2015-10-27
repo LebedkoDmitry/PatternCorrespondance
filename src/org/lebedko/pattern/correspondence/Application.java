@@ -22,11 +22,9 @@ public class Application {
 			String str = input.nextLine();
 			int n = str.length() + 1;
 			int m = pattern.length() + 1;
-			int a = 0, b = 0;
 			String s = "";
 			boolean [][] mat = new boolean[n][m];
 			List<String> strings = new ArrayList<String>();
-			boolean vertical = false;
 			int i = 0;
 			int j = 0;
 			while (j < m) {
@@ -44,8 +42,7 @@ public class Application {
 					//if (i > 0 && j > 0) {
 						// если символы шаблона и строки совпадают или шаблон описывает любой символ
 						// и предыдущий символ был распознан
-						if (i == 0 && (pattern.charAt(j - 1) == '*' ||
-								pattern.charAt(j - 1) == '?') && mat[i][j - 1]) {
+						if (i == 0 && pattern.charAt(j - 1) == '*' && mat[i][j - 1]) {
 							mat[i][j] = true;
 						}
 						if (i > 0) {
@@ -79,44 +76,37 @@ public class Application {
 				output.println("YES");
 				i = n - 1;
 				j = m - 1;
-				while (i >= 0 || j >= 0) {
-					if ((i - 1) < 0) {
-						a = 0;
-					}
-					else {
-						a = i - 1;
-					}
-					if ((j - 1) < 0) {
-						b = 0;
-					}
-					else {
-						b = j - 1;
-					}
-					if (mat[a][b]) {
-						if (vertical) {
-							// если движение было в вертикальном направлении
-							s = s + str.charAt(a);
-							vertical = false;
+				while (i > 0 || j > 0) {
+					if (i > 0 && j > 0) {
+						if (mat[i - 1][j - 1]) {
+							s = s + str.charAt(i - 1);
+							i--;
+							j--;
 							strings.add(s);
 							s = "";
-						} else {
-							// если ранее движение было в диагональном
-							// направлении
-							if (i != 0 && j != 0) {
-								strings.add(String.valueOf(str.charAt(a)));
-							}
 						}
-						i--;
-						j--;
-					} else {
-						if (mat[a][j]) {
-							s = s + str.charAt(a);
+						else if (mat[i - 1][j]) {
+							s = s + str.charAt(i - 1);
 							i--;
-							vertical = true;
-						} else {
-							if (mat[i][b]) {
+						}
+						else if (mat[i][j - 1]) {
+							j--;
+							s = "";
+							strings.add(s);
+						}
+						else {
+							throw new RuntimeException("Wrong direction");
+						}
+					}
+					else {
+						if (i == 0) {
+							if (mat[i][j - 1]) {
 								j--;
-								strings.add(new String(""));
+								s = "";
+								strings.add(s);
+							}
+							else {
+								throw new RuntimeException("Wrong direction");
 							}
 						}
 					}
